@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { CompareDataProduct } from '@/types'
 
+const isExpand = ref(false)
+
 const products: CompareDataProduct[] = [
   {
     "url_thumbnail": "https://vn-live-01.slatic.net/p/a1a8cbb1c861b6b4aed0fd9d7c60cf24.jpg",
@@ -258,61 +260,81 @@ const products: CompareDataProduct[] = [
     }
   }
 ]
+
 const totalProducts = computed(() => {
   return products.length
 })
+
 const minPrice = computed(() => {
   return products.reduce((prev, curr) => prev.price < curr.price ? prev : curr).price
 })
+
 const maxPrice = computed(() => {
   return products.reduce((prev, curr) => prev.price > curr.price ? prev : curr).price
 })
+
+const allShopeeProducts = computed(() => products.filter(p => p.product_base_id.startsWith('1__')))
 const shopeeProducts = computed(() => {
-  return products.filter(p => p.product_base_id.startsWith('1__'))
+  return isExpand.value ? allShopeeProducts.value : allShopeeProducts.value.slice(0, 3)
 })
+
+const allLazadaProducts = computed(() => products.filter(p => p.product_base_id.startsWith('2__')))
 const lazadaProducts = computed(() => {
-  return products.filter(p => p.product_base_id.startsWith('2__'))
+  return isExpand.value ? allLazadaProducts.value : allLazadaProducts.value.slice(0, 3)
 })
+
+const allTikiProducts = computed(() => products.filter(p => p.product_base_id.startsWith('3__')))
 const tikiProducts = computed(() => {
-  return products.filter(p => p.product_base_id.startsWith('3__'))
+  return isExpand.value ? allTikiProducts.value : allTikiProducts.value.slice(0, 3)
 })
+
+const isExpandable = computed(() => allShopeeProducts.value.length > 3 || allLazadaProducts.value.length > 3 || allTikiProducts.value.length > 3)
+const productToExpandNum = computed(() => products.length - shopeeProducts.value.length - lazadaProducts.value.length - tikiProducts.value.length)
+
+const startPos = ref<HTMLElement>()
+function toggleExpand() {
+  isExpand.value = !isExpand.value
+  startPos.value?.scrollIntoView()
+}
 </script>
 
 <template>
-  <div>
-    <div>
-      <div class="my-3 text-gray-600">
-        Tìm thấy
-        <span class="text-gray-700 font-medium">{{ totalProducts }}</span>
-        nơi bán khác, giá từ
-        <span class="text-gray-700 font-medium">{{ minPrice }} ₫ -
-          {{ maxPrice }} ₫</span>
+  <div ref="startPos" class="scroll-mt-16">
+    <div class="my-3 text-gray-600">
+      Tìm thấy
+      <span class="text-gray-700 font-medium">{{ totalProducts }}</span>
+      nơi bán khác, giá từ
+      <span class="text-gray-700 font-medium">{{ minPrice }} ₫ -
+        {{ maxPrice }} ₫</span>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <img
+          src="https://lh3.googleusercontent.com/OwDr2GswbeYne43OtdOL1cqPx_Q7MoXNPbGAAalXumcCojcbb-KcUQqjP4l2EHOPXySoPWqk5YKDcRqT4_22Yv0L0g0NS6owVBz5ZRFCmUEyyC3NcZd4Nndb6vLEkFJ6k29I5fOb=w556-h50-no"
+          alt="shopee" class="h-10">
       </div>
-      <div class="space-y-4">
-        <div>
-          <img
-            src="https://lh3.googleusercontent.com/OwDr2GswbeYne43OtdOL1cqPx_Q7MoXNPbGAAalXumcCojcbb-KcUQqjP4l2EHOPXySoPWqk5YKDcRqT4_22Yv0L0g0NS6owVBz5ZRFCmUEyyC3NcZd4Nndb6vLEkFJ6k29I5fOb=w556-h50-no"
-            alt="shopee" class="h-10">
-        </div>
-        <ProductCompareRow v-for="product in shopeeProducts" :key="product.product_base_id" :product="product" />
+      <ProductComparePriceRow v-for="product in shopeeProducts" :key="product.product_base_id" :product="product" />
+    </div>
+    <div class="mt-6 space-y-4">
+      <div>
+        <img
+          src="https://lh3.googleusercontent.com/DF4aF5VZEz_NYkI_eJIyYFD6SM21UyBxiEeWVRaYY3Cr-MUZ8AuUgB6kI6L6DBCzmCJf7TIMRQYdHgZ9m4WEA4e41oglDoWQIpwoK0Tj784azJsPky9g3w6tUR7mhsfi4U8o_NSGJw=w765-h50-no"
+          alt="shopee" class="h-10">
       </div>
-      <div class="mt-6 space-y-4">
-        <div>
-          <img
-            src="https://lh3.googleusercontent.com/DF4aF5VZEz_NYkI_eJIyYFD6SM21UyBxiEeWVRaYY3Cr-MUZ8AuUgB6kI6L6DBCzmCJf7TIMRQYdHgZ9m4WEA4e41oglDoWQIpwoK0Tj784azJsPky9g3w6tUR7mhsfi4U8o_NSGJw=w765-h50-no"
-            alt="shopee" class="h-10">
-        </div>
-        <ProductCompareRow v-for="product in lazadaProducts" :key="product.product_base_id" :product="product" />
+      <ProductComparePriceRow v-for="product in lazadaProducts" :key="product.product_base_id" :product="product" />
+    </div>
+    <div class="mt-6 space-y-4">
+      <div>
+        <img
+          src="https://lh3.googleusercontent.com/VaYiFU3XqGRArjLz8nZhSv2VWl39KbeU3Kv3HiK7c5LNA-JqSRZo22Ds2JK0kK04SENns6F8c-vrtQLlC7VHkvh3Y-grYu2HKF6hVAfY0rH_ivBDwdQXB2wc1hkPbBNjp_2Sme5wTA=w515-h50-no"
+          alt="shopee" class="h-10">
       </div>
-      <div class="mt-6 space-y-4">
-        <div>
-          <img
-            src="https://lh3.googleusercontent.com/VaYiFU3XqGRArjLz8nZhSv2VWl39KbeU3Kv3HiK7c5LNA-JqSRZo22Ds2JK0kK04SENns6F8c-vrtQLlC7VHkvh3Y-grYu2HKF6hVAfY0rH_ivBDwdQXB2wc1hkPbBNjp_2Sme5wTA=w515-h50-no"
-            alt="shopee" class="h-10">
-        </div>
-        <ProductCompareRow v-for="product in tikiProducts" :key="product.product_base_id" :product="product" />
-      </div>
-
+      <ProductComparePriceRow v-for="product in tikiProducts" :key="product.product_base_id" :product="product" />
+    </div>
+    <div class="text-center mt-4">
+      <UButton v-if="isExpandable" :label="isExpand ? 'Rút gọn' : `Xem thêm ${productToExpandNum} nơi bán khác`"
+        variant="ghost" color="gray" size="xl" :icon="isExpand ? 'i-ph-caret-up' : 'i-ph-caret-down'" trailing
+        @click="toggleExpand()" />
     </div>
   </div>
 </template>
