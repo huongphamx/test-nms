@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ["@nuxt/ui", "@vueuse/nuxt"],
+  modules: ["@nuxt/ui", "@vueuse/nuxt", "vue3-carousel-nuxt"],
 
   ui: {
     icons: ['ph', 'fluent-mdl2'],

@@ -19,7 +19,7 @@ export interface Category {
 
 const isOpen = ref(false)
 
-const { data: categoryListRes, pending } = await useAPI<CategoryListResponse>('/categories', { lazy: true })
+const { data: categoryListRes, pending } = await useAPI<CategoryListResponse>('/v1/categories/', { lazy: true })
 
 </script>
 

@@ -1,116 +1,86 @@
 <script lang="ts" setup>
 import { VisXYContainer, VisLine, VisAxis, VisScatter } from '@unovis/vue'
+import { format, differenceInMonths } from 'date-fns'
+import type { ProductBase } from '@/types'
 
-const priceHistory = {
-  "price": [
-    449000,
-    449000,
-    669000,
-    569000,
-    608790,
-    608790,
-    526890,
-    579000,
-    579000,
-    521100,
-    526890,
-    479470,
-    408590,
-    579000,
-    669000,
-    541890,
-    669000,
-    608790,
-    669000,
-    608790,
-    669000,
-    579000,
-    526890,
-    519000,
-    472290,
-    472290,
-    519000,
-    472290,
-    409000,
-    409000,
-    579000,
-    499000,
-    579000,
-    521100,
-    579000,
-    449000,
-    579000,
-    579000,
-    526890,
-    526890
-  ],
-  "price_ts": [
-    1690701772000,
-    1691016312000,
-    1691739068000,
-    1692906553000,
-    1694077694000,
-    1694683479000,
-    1695301822000,
-    1696491003000,
-    1696705615000,
-    1696808827000,
-    1697268491000,
-    1697365322000,
-    1697451652000,
-    1698415404000,
-    1699499902000,
-    1699606303000,
-    1699702544000,
-    1700792606000,
-    1700984211000,
-    1701320363000,
-    1702201102000,
-    1702449529000,
-    1702556199000,
-    1703217855000,
-    1704363612576,
-    1704483574000,
-    1704682208000,
-    1705198052000,
-    1706386329000,
-    1706958955000,
-    1707263809000,
-    1707805310000,
-    1708005598000,
-    1709197629000,
-    1709385726000,
-    1710562709000,
-    1711676230879,
-    1711915231714,
-    1712914245691,
-    1713230415514
-  ]
+interface PriceHistory {
+  price: number[],
+  price_ts: number[]
 }
+const props = defineProps<{
+  productData: ProductBase
+}>()
 
-const data = priceHistory.price.map((p, i) => {
-  return { x: priceHistory.price_ts[i], y: p }
+const { data: priceHistory } = await useAPI<PriceHistory>(`/v1/products/${props.productData.product_base_id}/price-history`)
+
+const data = priceHistory.value!.price.map((p, i) => {
+  return { x: priceHistory.value!.price_ts[i], y: p }
 })
-const x = (d: any) => d.x
+const x = (d: any, i: number) => i
 const y = (d: any) => d.y
+
+function tickXFormat(tick: number) {
+  return format(new Date(data[tick].x), 'dd-MM-yyyy')
+}
+function tickYFormat(d: number) {
+  return `${d / 1000}k`
+}
 </script>
 
 <template>
-  <div class="mt-4 flex">
+  <div v-if="priceHistory" class="mt-4 flex flex-col lg:flex-row">
     <div class="flex-1 border border-orange-500 rounded-lg px-4 py-4">
-      <div class="mb-3">
+      <div class="flex justify-between">
         <span class="text-orange-500 text-lg font-medium">Biến động giá
         </span>
+        <div>
+          <div>
+            <span class="text-sm">Giá hiện tại: </span>
+            <span class="text-lg font-medium">{{ productData.price.toLocaleString('de-DE') }} ₫</span>
+          </div>
+          <div class="mt-1 text-sm">
+            <span class="">Từ </span>
+            <span class="bg-gray-200 px-2 py-1">{{ format(priceHistory.price_ts[0], 'dd-MM-yyyy') }}</span>
+            <span class="ml-4 ">Đến </span>
+            <span class="bg-gray-200 px-2 py-1">{{ format(priceHistory.price_ts[priceHistory.price_ts.length - 1],
+    'dd-MM-yyyy') }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3 text-sm">
+        <span>Cao nhất: </span>
+        <span class="text-red-500">{{ Math.max(...priceHistory.price).toLocaleString('de-DE') }} ₫</span>
+        <span class="ml-4">Thấp nhất: </span>
+        <span class="text-green-500">{{ Math.min(...priceHistory.price).toLocaleString('de-DE') }} ₫</span>
       </div>
       <VisXYContainer :data="data" class="w-full">
         <VisLine :x="x" :y="y" />
         <VisScatter :x="x" :y="y" />
-        <VisAxis type="x" :gridLine="false" />
-        <VisAxis type="y" :gridLine="false" />
+        <VisAxis type="x" :x="x" :tickFormat="tickXFormat" :gridLine="false" />
+        <VisAxis type="y" :tickFormat="tickYFormat" :gridLine="false" />
       </VisXYContainer>
     </div>
-    <div class="ml-auto w-full max-w-sm">
-
+    <div class="ml-4 w-full max-w-sm space-y-6">
+      <div class=" p-4 border border-orange-500 rounded">
+        <ul class="list-disc list-inside">
+          <li>Tổng thời gian biến động giá: <span>{{ differenceInMonths(new
+    Date(priceHistory.price_ts[priceHistory.price_ts.length - 1]), new
+    Date(priceHistory.price_ts[0])) }}</span> tháng</li>
+          <li>Số lần thay đổi giá: <span>{{ (new Set(priceHistory.price)).size }}</span> lần</li>
+        </ul>
+      </div>
+      <div class="p-4 pr-8 border border-orange-500 rounded bg-amber-50">
+        <p class="mb-2 text-2xl font-semibold">Gợi ý dành cho bạn</p>
+        <p class="mb-4">
+          Tiện ích Mua Thông Minh giúp bạn xem tất cả các mức giá trong quá khứ của mọi sản phẩm (Shopee, Tiki, Lazada,
+          Sendo). <strong>Tiết kiệm gấp đôi</strong>
+        </p>
+        <div class="mb-4 flex justify-center items-center gap-4">
+          <span class="cursor-pointer text-xs" @click="">Video hướng dẫn</span>
+          <a href="https://www.beecost.com/install?pub=lsg_widget" target="_blank"><span
+              class="text-white p-2 bg-orange-500 rounded cursor-pointer">Xem thêm chi tiết</span></a>
+        </div>
+      </div>
     </div>
   </div>
 </template>

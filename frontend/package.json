@@ -19,7 +19,8 @@
     "nuxt": "^3.11.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
-    "vue-timeago3": "^2.3.2"
+    "vue-timeago3": "^2.3.2",
+    "vue3-carousel-nuxt": "^1.1.1"
   },
   "devDependencies": {
     "@vueuse/core": "^10.9.0",

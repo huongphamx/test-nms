@@ -46,32 +46,39 @@ function scrollToSection(id: string) {
 <template>
   <div>
     <div class="sticky top-0 z-10 w-full bg-white">
-      <ul class="flex gap-1">
-        <li v-for="tab in tabs" :key="tab.id" class="px-2 py-3 flex items-center gap-2 border-b-2 cursor-pointer"
-          :class="currentSection === tab.id ? 'border-orange-500' : 'text-gray-500'" @click="scrollToSection(tab.id)">
-          <UIcon :name="tab.icon" class="w-5 h-5" /> <span class="font-medium">{{ tab.label }}</span>
+      <ul class="flex lg:gap-1 justify-between lg:justify-normal">
+        <li v-for="tab in tabs" :key="tab.id"
+          class="w-full lg:w-fit px-2 py-1 lg:py-3 flex flex-col lg:flex-row items-center gap-2 border-b md:border-b-2 cursor-pointer"
+          :class="currentSection === tab.id ? 'md:border-orange-500' : 'text-gray-500'"
+          @click="scrollToSection(tab.id)">
+          <div>
+            <UIcon :name="tab.icon" class="w-5 h-5" />
+          </div>
+          <div class="text-[10px] lg:text-base font-medium text-center">{{ tab.label }}</div>
         </li>
       </ul>
     </div>
 
-    <div id="price-compare" ref="compareSection" class="mt-2 scroll-mt-20">
-      <div class="lg:text-lg font-semibold">So sánh giá</div>
-      <ProductComparePrice />
-    </div>
-    <div id="price-history" ref="priceHistorySection" class="mt-4 scroll-mt-16">
-      <div class="flex justify-between items-center">
-        <span class="lg:text-lg font-semibold">Lịch sử giá</span>
-        <ModalProductTrackPrice :product-base="productData" />
+    <div class="px-4 py-2 lg:px-0">
+      <div id="price-compare" ref="compareSection" class="mt-2 scroll-mt-20">
+        <div class="lg:text-lg font-medium">So sánh giá</div>
+        <ProductComparePrice />
       </div>
-      <ProductPriceHistory />
-    </div>
-    <div id="product-description" ref="descriptionSection" class="mt-4 scroll-mt-16">
-      <div class="lg:text-lg font-semibold mb-4">Mô tả sản phẩm</div>
-      <ProductDescription :description="productData.description.replace(/(?:\r\n|\r|\n)/g, '<br>')" />
-    </div>
-    <div id="product-reviews" ref="reviewsSection" class="mt-4 scroll-mt-16">
-      <div class="lg:text-lg font-semibold mb-4">Đánh giá từ người mua</div>
-      <ProductReviews />
+      <div id="price-history" ref="priceHistorySection" class="mt-4 scroll-mt-16">
+        <div class="flex justify-between items-center">
+          <span class="lg:text-lg font-medium">Lịch sử giá</span>
+          <ModalProductTrackPrice :product-base="productData" />
+        </div>
+        <ProductPriceHistory :product-data="productData" />
+      </div>
+      <div id="product-description" ref="descriptionSection" class="mt-4 scroll-mt-16">
+        <div class="lg:text-lg font-medium mb-4">Mô tả sản phẩm</div>
+        <ProductDescription :description="productData.description.replace(/(?:\r\n|\r|\n)/g, '<br>')" />
+      </div>
+      <div id="product-reviews" ref="reviewsSection" class="mt-4 scroll-mt-16">
+        <div class="lg:text-lg font-medium mb-4">Đánh giá từ người mua</div>
+        <ProductReviews :product-data="productData" />
+      </div>
     </div>
   </div>
 </template>

@@ -1,12 +1,3 @@
-export interface ProductDetailResponse {
-  data: Data;
-  status: string;
-}
-
-export interface Data {
-  product_base: ProductBase;
-}
-
 export interface ProductBase {
   attributes: Attribute[];
   brand: Brand;
