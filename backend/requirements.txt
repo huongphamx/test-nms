@@ -1,0 +1,12 @@
+fastapi
+python-multipart
+uvicorn[standard]
+pydantic
+pydantic-settings
+sqlalchemy[asyncio]
+asyncpg
+alembic[tz]
+tenacity
+httpx
+python-dateutil
+requests

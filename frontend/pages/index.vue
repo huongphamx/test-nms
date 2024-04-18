@@ -78,5 +78,11 @@ useHead({
     <ProductRelated class="mt-8" />
 
     <ProductSuggested class="mt-8" />
+    <UDivider class="my-8" />
+    <BlogRelated />
+    <UDivider class="my-8" />
+    <ProductRecent />
+    <UDivider class="my-8" />
+    <ExtensionAds />
   </div>
 </template>

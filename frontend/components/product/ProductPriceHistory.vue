@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { VisXYContainer, VisLine, VisAxis, VisScatter } from '@unovis/vue'
+import { VisXYContainer, VisLine, VisAxis, VisScatter, VisTooltip, VisCrosshair } from '@unovis/vue'
+import { Position, Scatter, Line } from '@unovis/ts'
 import { format, differenceInMonths } from 'date-fns'
 import type { ProductBase } from '@/types'
 
@@ -24,6 +25,12 @@ function tickXFormat(tick: number) {
 }
 function tickYFormat(d: number) {
   return `${d / 1000}k`
+}
+const triggers = {
+  // [Line.selectors.line]: (d: any) => `<div>Ngày ${d.x}</div> <div>${d.y} ₫</div>`,
+  [Scatter.selectors.point]: (d: any) => `<div class="rounded text-sm font-medium">
+    <div>Ngày ${format(new Date(d.x), 'dd-MM-yyyy')}</div> <div class="text-center">${d.y.toLocaleString('de-DE')} ₫</div>
+  </div>`
 }
 </script>
 
@@ -54,10 +61,11 @@ function tickYFormat(d: number) {
         <span class="text-green-500">{{ Math.min(...priceHistory.price).toLocaleString('de-DE') }} ₫</span>
       </div>
       <VisXYContainer :data="data" class="w-full">
-        <VisLine :x="x" :y="y" />
-        <VisScatter :x="x" :y="y" />
+        <VisLine color="#9ca3af" :x="x" :y="y" />
+        <VisScatter color="#9ca3af" :x="x" :y="y" />
         <VisAxis type="x" :x="x" :tickFormat="tickXFormat" :gridLine="false" />
         <VisAxis type="y" :tickFormat="tickYFormat" :gridLine="false" />
+        <VisTooltip :triggers="triggers" :horizontalPlacement="Position.Center" />
       </VisXYContainer>
     </div>
     <div class="ml-4 w-full max-w-sm space-y-6">
@@ -76,7 +84,7 @@ function tickYFormat(d: number) {
           Sendo). <strong>Tiết kiệm gấp đôi</strong>
         </p>
         <div class="mb-4 flex justify-center items-center gap-4">
-          <span class="cursor-pointer text-xs" @click="">Video hướng dẫn</span>
+          <ModalExtensionVideo />
           <a href="https://www.beecost.com/install?pub=lsg_widget" target="_blank"><span
               class="text-white p-2 bg-orange-500 rounded cursor-pointer">Xem thêm chi tiết</span></a>
         </div>

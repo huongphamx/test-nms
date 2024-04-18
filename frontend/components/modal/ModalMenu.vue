@@ -44,18 +44,3 @@ const { data: categoryListRes, pending } = await useAPI<CategoryListResponse>('/
     </UModal>
   </div>
 </template>
-
-<style scoped>
-/* For Webkit-based browsers (Chrome, Safari and Opera) */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* For IE, Edge and Firefox */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-</style>

@@ -28,6 +28,8 @@ services:
   #     dockerfile: frontend.dockerfile
   #   ports:
   #     - "3000:3000"
+  #   env_file:
+  #     - docker-compose.env
 
 volumes:
   postgres_data:
