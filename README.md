@@ -2,6 +2,7 @@
 ## Thời gian
 Thời gian thực hiện khoảng 24h.
 ## Hình ảnh trang web
+![screencapture-localhost-3000-2024-04-18-21_43_04](https://github.com/huongphamx/test-nms/assets/91840958/1e59591d-2ed3-47c3-a224-d7838a0e56b0)
 
 ## Các bước build
 1. Clone code
