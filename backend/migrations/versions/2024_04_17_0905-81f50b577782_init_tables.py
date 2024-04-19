@@ -43,7 +43,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("product_base_id", sa.String(), nullable=False),
         sa.Column("price", sa.Integer(), nullable=False),
-        sa.Column("price_ts", sa.Integer(), nullable=False),
+        sa.Column("price_ts", sa.BigInteger(), nullable=False),
         sa.ForeignKeyConstraint(
             ["product_base_id"],
             ["product.product_base_id"],
@@ -75,7 +75,7 @@ def upgrade() -> None:
         sa.Column("content", sa.String(), nullable=False),
         sa.Column("rating", sa.Integer(), nullable=False),
         sa.Column("images", sa.ARRAY(sa.String()), nullable=True),
-        sa.Column("created_at_platform", sa.Integer(), nullable=False),
+        sa.Column("created_at_platform", sa.BigInteger(), nullable=False),
         sa.Column("user_username", sa.String(), nullable=False),
         sa.Column("user_url_image", sa.String(), nullable=False),
         sa.ForeignKeyConstraint(
